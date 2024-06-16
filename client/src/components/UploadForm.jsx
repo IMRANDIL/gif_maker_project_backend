@@ -155,7 +155,7 @@ const UploadForm = () => {
         <GifContainer>
           <h2>Generated GIF</h2>
           <Gif src={gifUrl} alt="Generated GIF" />
-          <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif">
+          <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif" onClick={()=>setGifUrl(null)}>
             Download GIF
           </DownloadLink>
         </GifContainer>
