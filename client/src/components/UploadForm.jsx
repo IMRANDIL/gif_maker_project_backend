@@ -15,6 +15,7 @@ const Container = styled.div`
 
 const Title = styled.h1`
   font-size: 3em;
+  margin-bottom: 8px;
 `;
 
 const Form = styled.form`
