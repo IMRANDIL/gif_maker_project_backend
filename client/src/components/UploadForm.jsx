@@ -58,6 +58,10 @@ const Button = styled.button`
 const GifContainer = styled.div`
   margin-top: 30px;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 `;
 
 const Gif = styled.img`
@@ -65,6 +69,8 @@ const Gif = styled.img`
   height: auto;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-right: 10px;
+  margin-left: 10px;
 `;
 
 const DownloadLink = styled.a`
