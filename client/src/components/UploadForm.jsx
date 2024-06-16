@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import styled, { keyframes } from 'styled-components';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Container = styled.div`
   display: flex;
@@ -170,7 +172,7 @@ const UploadForm = () => {
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
     } catch (error) {
-      console.error(error.response?.data?.error || error.message);
+      toast.error(error.response?.data?.error || error.message);
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
     }
@@ -179,6 +181,7 @@ const UploadForm = () => {
   return (
     <Container>
       <Title>GiphyMania</Title>
+      <ToastContainer />
       {!gifUrl && (
         <Form onSubmit={handleSubmit}>
           <Label htmlFor="video">Video file:</Label>
@@ -221,7 +224,11 @@ const UploadForm = () => {
           <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif" onClick={() => setGifUrl(null)}>
             Download GIF
           </DownloadLink>
-          <ResetLink onClick={() => setGifUrl(null)}>
+          <ResetLink onClick={() => {
+            setGifUrl(null);
+            setDuration(5);
+            setStartTime(0)
+          }}>
             Reset
           </ResetLink>
         </GifContainer>

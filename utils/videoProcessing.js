@@ -1,5 +1,17 @@
 const ffmpeg = require('fluent-ffmpeg');
 
+function getVideoDuration(inputVideoPath) {
+  return new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(inputVideoPath, (err, metadata) => {
+      if (err) {
+        return reject(err);
+      }
+      const duration = metadata.format.duration;
+      resolve(duration);
+    });
+  });
+}
+
 function createGif(inputVideoPath, outputGifPath, startTime, duration) {
   return new Promise((resolve, reject) => {
     ffmpeg(inputVideoPath)
@@ -23,4 +35,4 @@ function createGif(inputVideoPath, outputGifPath, startTime, duration) {
   });
 }
 
-module.exports = { createGif };
+module.exports = { getVideoDuration, createGif };
