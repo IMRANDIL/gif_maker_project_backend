@@ -134,6 +134,7 @@ const ResetLink = styled.button`
 const UploadForm = () => {
   const [videoFile, setVideoFile] = useState(null);
   const [startTime, setStartTime] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [duration, setDuration] = useState(5);
   const [gifUrl, setGifUrl] = useState(null);
   const fileInputRef = useRef(null);
@@ -161,6 +162,7 @@ const UploadForm = () => {
     formData.append('duration', duration);
 
     try {
+      setLoading(true)
       const response = await axios.post('http://localhost:3001/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -169,12 +171,16 @@ const UploadForm = () => {
 
       const fixedGifUrl = response.data.gifUrl.replace(/\\/g, '/');
       setGifUrl(fixedGifUrl);
+      setLoading(false)
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
     } catch (error) {
       toast.error(error.response?.data?.error || error.message);
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
+      setLoading(false)
+      setDuration(5);
+      setStartTime(0)
     }
   };
 
@@ -213,7 +219,7 @@ const UploadForm = () => {
             required
             min="0"
           />
-          <Button type="submit">Create GIF</Button>
+          <Button type="submit">{loading ? 'Creating GIF' : 'Create GIF'}</Button>
         </Form>
       )}
 
