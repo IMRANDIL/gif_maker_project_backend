@@ -219,7 +219,7 @@ const UploadForm = () => {
             required
             min="0"
           />
-          <Button type="submit">{loading ? 'Creating GIF' : 'Create GIF'}</Button>
+          <Button type="submit" disabled={ loading}>{loading ? 'Creating GIF...' : 'Create GIF'}</Button>
         </Form>
       )}
 
@@ -227,7 +227,11 @@ const UploadForm = () => {
         <GifContainer>
           <h2 style={{ marginBottom: '8px' }}>Generated GIF</h2>
           <Gif src={gifUrl} alt="Generated GIF" />
-          <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif" onClick={() => setGifUrl(null)}>
+          <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif" onClick={() => {
+            setGifUrl(null);
+            setDuration(5);
+            setStartTime(0)
+          }}>
             Download GIF
           </DownloadLink>
           <ResetLink onClick={() => {
