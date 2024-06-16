@@ -1,6 +1,6 @@
 # Video to GIF Converter
 
-This project is a simple web application that allows users to upload a video file, specify a start time and duration, and convert a segment of the video into a GIF. The application uses Express.js for the server, multer for file uploads, and fluent-ffmpeg for video processing.
+This project consists an api and logic that allows users to upload a video file, specify a start time and duration, and convert a segment of the video into a GIF. The application uses Express.js for the server, multer for file uploads, and fluent-ffmpeg for video processing.
 
 ## Features
 
