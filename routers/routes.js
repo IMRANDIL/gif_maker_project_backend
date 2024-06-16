@@ -9,10 +9,14 @@ function setupRoutes(app, upload) {
   });
 
   // Handle file upload and GIF creation
-  app.post('/upload', upload.single('video'), async (req, res) => {
+  app.post('/upload', async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded or invalid file type' });
+    }
+
     const inputVideoPath = req.file.path;
     const outputGifPath = path.join('gifs', 'output.gif');
-    
+
     let startTime = parseInt(req.body.startTime, 10);
     let duration = parseInt(req.body.duration, 10);
 
@@ -36,6 +40,18 @@ function setupRoutes(app, upload) {
       // Clean up uploaded video
       fs.unlinkSync(inputVideoPath);
     }
+  });
+
+  // Error-handling middleware
+  app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+      // Handle Multer errors
+      return res.status(400).json({ error: err.message });
+    } else if (err) {
+      // Handle other errors
+      return res.status(500).json({ error: err.message });
+    }
+    next();
   });
 }
 

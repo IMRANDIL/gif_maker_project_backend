@@ -1,21 +1,45 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px;
+  padding: 20px;
   background: linear-gradient(135deg, #6e8efb, #a777e3);
   height: 100vh; /* Use full viewport height */
   color: #fff;
   overflow: auto; /* Allow scrolling if content overflows */
 `;
 
+const animateBorder = keyframes`
+  0% {
+    border-color: #6e8efb;
+  }
+  25% {
+    border-color: #a777e3;
+  }
+  50% {
+    border-color: #ff7e5f;
+  }
+  75% {
+    border-color: #feb47b;
+  }
+  100% {
+    border-color: #6e8efb;
+  }
+`;
+
 const Title = styled.h1`
-  font-size: 3em;
+  font-size: 2.5em;
   margin-bottom: 8px;
+  padding: 10px;
+  border: 4px solid;
+  border-radius: 10px;
+  animation: ${animateBorder} 4s linear infinite;
 `;
 
 const Form = styled.form`
@@ -133,62 +157,62 @@ const UploadForm = () => {
         },
       });
 
-      // Fix URL by replacing backslashes with forward slashes
       const fixedGifUrl = response.data.gifUrl.replace(/\\/g, '/');
       setGifUrl(fixedGifUrl);
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
     } catch (error) {
-      console.error('Error creating GIF:', error);
+      toast.error('Error creating GIF: ' + error.message); // Show error toast
+      fileInputRef.current.value = ''; // Clear the file input
+      setVideoFile(null); // Clear the video file state
     }
   };
 
   return (
     <Container>
-      <Title>Create a GIF from a Video</Title>
+      <Title>GiphyMania</Title>
+      <ToastContainer /> {/* Add this line */}
       {!gifUrl && (
-         <Form onSubmit={handleSubmit}>
-         <Label htmlFor="video">Video file:</Label>
-         <Input
-           type="file"
-           name="video"
-           id="video"
-           onChange={handleFileChange}
-           ref={fileInputRef}
-           required
-         />
-         <Label htmlFor="startTime">Start time (seconds):</Label>
-         <Input
-           type="number"
-           name="startTime"
-           id="startTime"
-           value={startTime}
-           onChange={(e) => setStartTime(e.target.value)}
-           required
-         />
-         <Label htmlFor="duration">Duration (seconds):</Label>
-         <Input
-           type="number"
-           name="duration"
-           id="duration"
-           value={duration}
-           onChange={(e) => setDuration(e.target.value)}
-           required
-         />
-         <Button type="submit">Create GIF</Button>
-       </Form>
+        <Form onSubmit={handleSubmit}>
+          <Label htmlFor="video">Video file:</Label>
+          <Input
+            type="file"
+            name="video"
+            id="video"
+            onChange={handleFileChange}
+            ref={fileInputRef}
+            required
+          />
+          <Label htmlFor="startTime">Start time (seconds):</Label>
+          <Input
+            type="number"
+            name="startTime"
+            id="startTime"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            required
+          />
+          <Label htmlFor="duration">Duration (seconds):</Label>
+          <Input
+            type="number"
+            name="duration"
+            id="duration"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            required
+          />
+          <Button type="submit">Create GIF</Button>
+        </Form>
       )}
-     
+
       {gifUrl && (
         <GifContainer>
-          <h2 style={{
-            marginBottom: '8px'
-          }}>Generated GIF</h2>
+          <h2 style={{ marginBottom: '8px' }}>Generated GIF</h2>
           <Gif src={gifUrl} alt="Generated GIF" />
-          <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif" onClick={()=>setGifUrl(null)}>
+          <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif" onClick={() => setGifUrl(null)}>
             Download GIF
           </DownloadLink>
-          <ResetLink onClick={()=> setGifUrl(null)}>
+          <ResetLink onClick={() => setGifUrl(null)}>
             Reset
           </ResetLink>
         </GifContainer>

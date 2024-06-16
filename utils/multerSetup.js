@@ -1,7 +1,7 @@
 const multer = require('multer');
 
 function setupMulter(app) {
-  const upload = multer({ 
+  const upload = multer({
     dest: 'uploads/',
     limits: { fileSize: 10 * 1024 * 1024 }, // Max file size 10 MB
     fileFilter: (req, file, cb) => {
@@ -14,7 +14,15 @@ function setupMulter(app) {
     }
   });
 
-  app.use(upload.single('video'));
+  // Use the upload middleware for handling file uploads
+  app.post('/upload', (req, res, next) => {
+    upload.single('video')(req, res, (err) => {
+      if (err) {
+        return next(err); // Pass the error to the error-handling middleware
+      }
+      next();
+    });
+  });
 }
 
 module.exports = { setupMulter };
