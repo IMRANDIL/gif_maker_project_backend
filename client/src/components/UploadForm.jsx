@@ -8,13 +8,13 @@ const Container = styled.div`
   align-items: center;
   padding: 40px;
   background: linear-gradient(135deg, #6e8efb, #a777e3);
-  min-height: 100vh;
+  height: 100vh; /* Use full viewport height */
   color: #fff;
+  overflow: auto; /* Allow scrolling if content overflows */
 `;
 
 const Title = styled.h1`
   font-size: 3em;
-  margin-bottom: 20px;
 `;
 
 const Form = styled.form`
@@ -88,6 +88,24 @@ const DownloadLink = styled.a`
   }
 `;
 
+const ResetLink = styled.button`
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: red;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+  cursor: pointer;
+  outline: none;
+  border: none;  /* Add this line to remove any border */
+
+  &:hover {
+    background: #feb47b;
+  }
+`;
+
 const UploadForm = () => {
   const [videoFile, setVideoFile] = useState(null);
   const [startTime, setStartTime] = useState(0);
@@ -127,43 +145,51 @@ const UploadForm = () => {
   return (
     <Container>
       <Title>Create a GIF from a Video</Title>
-      <Form onSubmit={handleSubmit}>
-        <Label htmlFor="video">Video file:</Label>
-        <Input
-          type="file"
-          name="video"
-          id="video"
-          onChange={handleFileChange}
-          ref={fileInputRef}
-          required
-        />
-        <Label htmlFor="startTime">Start time (seconds):</Label>
-        <Input
-          type="number"
-          name="startTime"
-          id="startTime"
-          value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
-          required
-        />
-        <Label htmlFor="duration">Duration (seconds):</Label>
-        <Input
-          type="number"
-          name="duration"
-          id="duration"
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
-          required
-        />
-        <Button type="submit">Create GIF</Button>
-      </Form>
+      {!gifUrl && (
+         <Form onSubmit={handleSubmit}>
+         <Label htmlFor="video">Video file:</Label>
+         <Input
+           type="file"
+           name="video"
+           id="video"
+           onChange={handleFileChange}
+           ref={fileInputRef}
+           required
+         />
+         <Label htmlFor="startTime">Start time (seconds):</Label>
+         <Input
+           type="number"
+           name="startTime"
+           id="startTime"
+           value={startTime}
+           onChange={(e) => setStartTime(e.target.value)}
+           required
+         />
+         <Label htmlFor="duration">Duration (seconds):</Label>
+         <Input
+           type="number"
+           name="duration"
+           id="duration"
+           value={duration}
+           onChange={(e) => setDuration(e.target.value)}
+           required
+         />
+         <Button type="submit">Create GIF</Button>
+       </Form>
+      )}
+     
       {gifUrl && (
         <GifContainer>
-          <h2>Generated GIF</h2>
+          <h2 style={{
+            marginBottom: '8px'
+          }}>Generated GIF</h2>
           <Gif src={gifUrl} alt="Generated GIF" />
           <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif" onClick={()=>setGifUrl(null)}>
             Download GIF
           </DownloadLink>
+          <ResetLink onClick={()=> setGifUrl(null)}>
+            Reset
+          </ResetLink>
         </GifContainer>
       )}
     </Container>
