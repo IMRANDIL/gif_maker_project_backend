@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import styled, { keyframes } from 'styled-components';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const Container = styled.div`
   display: flex;
@@ -142,6 +140,16 @@ const UploadForm = () => {
     setVideoFile(e.target.files[0]);
   };
 
+  const handleStartTimeChange = (e) => {
+    const value = Math.max(0, e.target.value);
+    setStartTime(value);
+  };
+
+  const handleDurationChange = (e) => {
+    const value = Math.max(1, e.target.value);
+    setDuration(value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -162,7 +170,7 @@ const UploadForm = () => {
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
     } catch (error) {
-      toast.error(error?.response?.data.error || error.message); // Show error toast
+      console.error(error.response?.data?.error || error.message);
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
     }
@@ -171,7 +179,6 @@ const UploadForm = () => {
   return (
     <Container>
       <Title>GiphyMania</Title>
-      <ToastContainer /> {/* Add this line */}
       {!gifUrl && (
         <Form onSubmit={handleSubmit}>
           <Label htmlFor="video">Video file:</Label>
@@ -189,8 +196,9 @@ const UploadForm = () => {
             name="startTime"
             id="startTime"
             value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
+            onChange={handleStartTimeChange}
             required
+            min="0"
           />
           <Label htmlFor="duration">Duration (seconds):</Label>
           <Input
@@ -198,8 +206,9 @@ const UploadForm = () => {
             name="duration"
             id="duration"
             value={duration}
-            onChange={(e) => setDuration(e.target.value)}
+            onChange={handleDurationChange}
             required
+            min="0"
           />
           <Button type="submit">Create GIF</Button>
         </Form>
