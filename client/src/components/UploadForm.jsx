@@ -162,7 +162,7 @@ const UploadForm = () => {
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
     } catch (error) {
-      toast.error('Error creating GIF: ' + error.message); // Show error toast
+      toast.error(error?.response?.data.error || error.message); // Show error toast
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
     }

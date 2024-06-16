@@ -1,14 +1,13 @@
 const express = require('express');
-const multer = require('multer');
 const cors = require('cors')
 const path = require('path');
-const { setupRoutes } = require('./routers/routes');
+const { errorHandler } = require('./middlewares/errorMiddleware');
+
 
 const app = express();
 const port = 3001;
 app.use(cors())
-// Middleware to handle file uploads
-const upload = multer({ dest: 'uploads/' });
+
 
 // Serve the 'gifs' directory statically
 app.use('/gifs', express.static(path.join(__dirname, 'gifs')));
@@ -17,8 +16,10 @@ app.use('/gifs', express.static(path.join(__dirname, 'gifs')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Setup routes
-setupRoutes(app, upload);
+ // Serve the HTML form
+ app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.get('/download/:filename', (req, res) => {
   const filePath = path.join(__dirname, 'gifs', req.params.filename);
@@ -28,6 +29,10 @@ app.get('/download/:filename', (req, res) => {
     }
   });
 });
+
+app.use('/', require('./routers/routes'))
+
+app.use(errorHandler)
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
