@@ -3,9 +3,8 @@ const multer = require('multer');
 function setupMulter() {
   const upload = multer({
     dest: 'uploads/',
-    limits: { fileSize: 10 * 1024 * 1024 }, // Max file size 10 MB
+    limits: { fileSize: 80 * 1024 * 1024 }, // Max file size 10 MB
     fileFilter: (req, file, cb) => {
-      console.log(file.mimetype)
       const allowedFormats = ['video/mp4', 'video/mpeg', 'video/quicktime']; // Add more formats if needed
       if (!allowedFormats.includes(file.mimetype)) {
         return cb(new Error('Only video files in MP4, MPEG, or QuickTime formats are allowed'));
