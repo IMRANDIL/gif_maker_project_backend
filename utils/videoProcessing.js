@@ -13,6 +13,12 @@ function getVideoDuration(inputVideoPath) {
   });
 }
 
+/**
+ * Retrieves the width of the video specified by the input path.
+ * 
+ * @param {string} inputVideoPath - The path to the input video file.
+ * @returns {Promise<number>} - A promise that resolves with the width of the video.
+ */
 function getVideoWidth(inputVideoPath) {
   return new Promise((resolve, reject) => {
     ffmpeg.ffprobe(inputVideoPath, (err, metadata) => {
