@@ -13,6 +13,18 @@ function getVideoDuration(inputVideoPath) {
   });
 }
 
+function getVideoWidth(inputVideoPath) {
+  return new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(inputVideoPath, (err, metadata) => {
+      if (err) {
+        return reject(err);
+      }
+      const width = metadata.streams[0].width;
+      resolve(width);
+    });
+  });
+}
+
 function createGif(inputVideoPath, outputGifPath, startTime, duration) {
   return new Promise((resolve, reject) => {
     const palettePath = path.join(__dirname, 'palette.png');
