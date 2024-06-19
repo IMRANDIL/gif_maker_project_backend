@@ -1,8 +1,10 @@
 const express = require('express');
+require('dotenv').config()
 const cors = require('cors')
 const path = require('path');
 const { errorHandler } = require('./middlewares/errorMiddleware');
-
+const { connectDB } = require('./db/dbConfig');
+const authMiddleware = require('./middlewares/authMiddleware');
 
 const app = express();
 const port = 3001;
@@ -21,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/download/:filename', (req, res) => {
+app.get('/download/:filename', authMiddleware, (req, res) => {
   const filePath = path.join(__dirname, 'gifs', req.params.filename);
   res.download(filePath, (err) => {
     if (err) {
@@ -30,10 +32,16 @@ app.get('/download/:filename', (req, res) => {
   });
 });
 
+app.use('/api/users', require('./routers/user'))
+app.use('/api/orders', require('./routers/order'))
+
 app.use('/', require('./routers/routes'))
 
 app.use(errorHandler)
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+connectDB().then(()=>{
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+})
+

@@ -4,9 +4,10 @@ const fs = require('fs');
 const { setupMulter } = require('../utils/multerSetup');
 const router = require('express').Router();
 const { upload } = setupMulter();
+const authMiddleware = require('../middlewares/authMiddleware');
 
 // Handle file upload and GIF creation
-router.post('/upload', upload.single('video'), async (req, res) => {
+router.post('/upload', authMiddleware, upload.single('video'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded or invalid file type' });
   }

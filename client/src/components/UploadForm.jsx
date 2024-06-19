@@ -138,6 +138,7 @@ const UploadForm = () => {
   const [duration, setDuration] = useState(5);
   const [gifUrl, setGifUrl] = useState(null);
   const fileInputRef = useRef(null);
+  const authToken = localStorage.getItem('token'); // Retrieve the auth token from localStorage
 
   const handleFileChange = (e) => {
     setVideoFile(e.target.files[0]);
@@ -162,25 +163,26 @@ const UploadForm = () => {
     formData.append('duration', duration);
 
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await axios.post('http://localhost:3001/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${authToken}` // Include the auth token in the request headers
         },
       });
 
       const fixedGifUrl = response.data.gifUrl.replace(/\\/g, '/');
       setGifUrl(fixedGifUrl);
-      setLoading(false)
+      setLoading(false);
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
     } catch (error) {
       toast.error(error.response?.data?.error || error.message);
       fileInputRef.current.value = ''; // Clear the file input
       setVideoFile(null); // Clear the video file state
-      setLoading(false)
+      setLoading(false);
       setDuration(5);
-      setStartTime(0)
+      setStartTime(0);
     }
   };
 
@@ -227,10 +229,28 @@ const UploadForm = () => {
         <GifContainer>
           <h2 style={{ marginBottom: '8px' }}>Generated GIF</h2>
           <Gif src={gifUrl} alt="Generated GIF" />
-          <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif" onClick={() => {
-            setGifUrl(null);
-            setDuration(5);
-            setStartTime(0)
+          <DownloadLink href={`http://localhost:3001/download/${gifUrl.split('/').pop()}`} download="output.gif" onClick={(e) => {
+            e.preventDefault();
+            axios({
+              url: `http://localhost:3001/download/${gifUrl.split('/').pop()}`,
+              method: 'GET',
+              responseType: 'blob', // Important
+              headers: {
+                'Authorization': `Bearer ${authToken}`
+              }
+            }).then((response) => {
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'output.gif'); //or any other extension
+              document.body.appendChild(link);
+              link.click();
+              setGifUrl(null)
+              setDuration(5)
+              setStartTime(0)
+            }).catch((error) => {
+              toast.error('Download failed. Please try again.');
+            });
           }}>
             Download GIF
           </DownloadLink>
@@ -248,3 +268,4 @@ const UploadForm = () => {
 };
 
 export default UploadForm;
+
