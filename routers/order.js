@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/authMiddleware');
-const { createOrder, getAllOrders, getOrderById } = require('../controllers/order');
+const { createOrder, verifyPayment, getAllOrders, getOrderById } = require('../controllers/order');
 
-// Create a new order
-router.post('/', authMiddleware, createOrder);
+router.post('/create', authMiddleware, createOrder);
+router.post('/verify', authMiddleware, verifyPayment);
 
 // Get all orders for the logged-in user
 router.get('/', authMiddleware, getAllOrders);

@@ -4,14 +4,15 @@ import UploadForm from './components/UploadForm';
 import Login from './components/Login';
 import Register from './components/Register';
 import './App.css';
-import { PrivateHandler } from './components/private/PrivateHandler';
+import { PrivateHandler, PrivateHomeHandler } from './components/private/PrivateHandler';
 import { PublicHandler } from './components/public/PublicHandler';
+import PaymentComponent from './components/PaymentComponent';
 
 const App = () => {
   const token = localStorage.getItem('token');
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.clear();
     // Navigate('/login');
     window.location.reload(); // Refresh the page to update the UI
   };
@@ -28,7 +29,8 @@ const App = () => {
           )}
         </header>
         <Routes>
-          <Route path="/" element={<PrivateHandler>{<UploadForm/>}</PrivateHandler>} />
+          <Route path='/payment' element={<PrivateHandler>{<PaymentComponent/>}</PrivateHandler>}/>
+          <Route path="/" element={<PrivateHomeHandler>{<UploadForm/>}</PrivateHomeHandler>} />
           <Route path="/login" element={<PublicHandler>{<Login/>}</PublicHandler>} />
           <Route path="/register" element={<PublicHandler>{<Register/>}</PublicHandler>} />
         </Routes>

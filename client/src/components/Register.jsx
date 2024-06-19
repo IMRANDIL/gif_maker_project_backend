@@ -47,7 +47,7 @@ const Register = () => {
       const { token } = response.data;
       localStorage.setItem('token', token); // Store token in localStorage
       setLoading(false);
-      window.location.reload(); // Refresh the page to update the UI
+      navigate('/payment');
     } catch (err) {
       setLoading(false);
       if (err.response && err.response.status === 400 && err.response.data.message === 'Email already exists') {
