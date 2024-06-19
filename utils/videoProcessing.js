@@ -58,7 +58,16 @@ function createGif(inputVideoPath, outputGifPath, startTime, duration) {
           .output(outputGifPath)
           .on('end', () => {
             console.log('GIF created successfully!');
-            resolve();
+            // Remove the palette file after GIF creation
+            fs.unlink(palettePath, (err) => {
+              if (err) {
+                console.error('Failed to delete palette file:', err);
+                reject(err);
+              } else {
+                console.log('Palette file deleted successfully.');
+                resolve();
+              }
+            });
           })
           .on('error', (err) => {
             console.error('Error: ' + err.message);
