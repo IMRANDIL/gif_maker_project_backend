@@ -1,5 +1,6 @@
 const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
+const fs = require('fs')
 
 function getVideoDuration(inputVideoPath) {
   return new Promise((resolve, reject) => {
@@ -37,7 +38,7 @@ function createGif(inputVideoPath, outputGifPath, startTime, duration) {
 
     // Step 1: Generate a color palette
     ffmpeg(inputVideoPath)
-      .setStartTime(startTime)
+      .seekInput(startTime) // Correct method to set start time
       .duration(duration)
       .outputOptions([
         '-vf', `fps=15,scale=640:-1:flags=lanczos,palettegen`,
@@ -47,11 +48,13 @@ function createGif(inputVideoPath, outputGifPath, startTime, duration) {
       .on('end', () => {
         // Step 2: Use the generated palette to create the GIF
         ffmpeg(inputVideoPath)
-          .setStartTime(startTime)
+          .seekInput(startTime) // Correct method to set start time
           .duration(duration)
+          .input(palettePath) // Correct method to add input palette
+          .complexFilter([
+            `fps=15,scale=640:-1:flags=lanczos [x]; [x][1:v] paletteuse=dither=bayer:bayer_scale=3`
+          ])
           .outputOptions([
-            '-i', palettePath,
-            '-lavfi', 'fps=15,scale=640:-1:flags=lanczos [x]; [x][1:v] paletteuse=dither=bayer:bayer_scale=3',
             '-gifflags', '+transdiff',
             '-y'
           ])
